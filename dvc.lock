@@ -1,0 +1,30 @@
+schema: '2.0'
+stages:
+  Collabrative:
+    cmd: python collabrative/collab.py
+    deps:
+    - path: Data/Music Info.csv
+      hash: md5
+      md5: e63b74919a3cdada5c804df4666391c9
+      size: 14985870
+    - path: Data/User Listening History.csv
+      hash: md5
+      md5: 3a12e713844195171c7040c051d6d4ae
+      size: 602515573
+    - path: collabrative/collab.py
+      hash: md5
+      md5: 38f262eab3db7b0b9118f7393298d660
+      size: 4115
+    outs:
+    - path: Data/filtered_data.csv
+      hash: md5
+      md5: 91132dd35b76258e8ef5e5a39fa7b22f
+      size: 9072371
+    - path: Data/interaction_matrix.npz
+      hash: md5
+      md5: 53f8fa1e7cec19856a6b2bc60ce8881f
+      size: 32311353
+    - path: Data/track_id.npy
+      hash: md5
+      md5: 4a52e4cb6bae6b0126c1344dac7c7686
+      size: 640058

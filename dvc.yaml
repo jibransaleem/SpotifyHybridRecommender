@@ -1,0 +1,11 @@
+stages:
+  Collabrative:
+    cmd: python SpotifyHybridRecommender/collabrative/collab.py
+    deps:
+      - SpotifyHybridRecommender/collabrative/collab.py
+      - SpotifyHybridRecommender/Data/Music Info.csv
+      - SpotifyHybridRecommender/Data/User Listening History.csv
+    outs:
+      - SpotifyHybridRecommender/Data/filtered_data.csv
+      - SpotifyHybridRecommender/Data/track_id.npy
+      - SpotifyHybridRecommender/Data/interaction_matrix.npz
