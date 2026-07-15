@@ -1,5 +1,5 @@
 stages:
-  Collabrative:
+  Collabrativ:
     cmd: python SpotifyHybridRecommender/collabrative/collab.py
     deps:
       - SpotifyHybridRecommender/collabrative/collab.py
