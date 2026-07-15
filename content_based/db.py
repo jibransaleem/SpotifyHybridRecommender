@@ -28,6 +28,7 @@ def load_database()->Client:
   
 
 def load_chroma():
-    client = chromadb.PersistentClient(path="./chroma_db")
+    BASE_PATH = Path(__file__).resolve().parent.parent / "Data"/"chroma_db" 
+    client = chromadb.PersistentClient(path=str(BASE_PATH))
     return client
 idx = ['4', '72', '357', '27', '26481']

@@ -14,6 +14,7 @@ from preprocessors.clean import load_cleaner , make_frame
 
 col_to_remove = ["track_id" ,"name" ,"spotify_preview_url" , "spotify_id" , "genre"]
 
+
 def client():
     try :
         db_client= load_database()
@@ -45,19 +46,20 @@ def fetch_by_id(idx:list ):
     except Exception as e:
         raise QUERY_ERROR(f"Unexpected error: {e}") from e
 
-def fetch_result(song_name:str):
+def fetch_result(song_name:str , artist_name:str):
     try :
         db_client = client()
         if not isinstance(db_client , Client):
             return db_client
         song_name = song_name.strip().lower()
-        
+        artist_name =  artist_name.strip.lower()
         response = (
-        db_client.table("my_songs")
-        .select("*")
-        .eq("name",song_name ) # add artist nme to some song name dupliates
-        .execute()
-    )
+            db_client.table("my_songs")
+            .select("*")
+            .eq("name", song_name)
+            .eq("artist", artist_name)   # narrows down duplicates with the same song name
+            .execute()
+        )
 
         data = response.data
         return data
@@ -69,7 +71,7 @@ def fetch_result(song_name:str):
         raise QUERY_ERROR(f"Unexpected error: {e}") from e
     
 
-def recommend_by_content(name:str):
+def recommend_by_content(name:str , artist:str):
     try :
         name =  name.strip().lower()
         res = fetch_result(name)
@@ -78,7 +80,6 @@ def recommend_by_content(name:str):
         embeddings = trans.transform(df).toarray()
         client = load_chroma()
         collection =  client.get_collection(name = "song")
-
         results = collection.query(
             query_embeddings=embeddings,   # must be a list of embeddings, even for one query
             n_results=5
