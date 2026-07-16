@@ -28,3 +28,44 @@ stages:
       hash: md5
       md5: 4a52e4cb6bae6b0126c1344dac7c7686
       size: 640058
+  Content_ingest:
+    cmd: python ./content_based/ingest.py
+    deps:
+    - path: ./Data/Music Info.csv
+      hash: md5
+      md5: e63b74919a3cdada5c804df4666391c9
+      size: 14985870
+    - path: ./content_based/ingest.py
+      hash: md5
+      md5: fbcc8d6e0040b39e90915c41db905289
+      size: 1453
+    outs:
+    - path: ./Data/content_base_data/filter_content.csv
+      hash: md5
+      md5: 2f8344f27d60af275b58156502ecd6dd
+      size: 7272883
+  Content_Encode:
+    cmd: python ./content_based/Encode.py
+    deps:
+    - path: ./Data/content_base_data/filter_content.csv
+      hash: md5
+      md5: 2f8344f27d60af275b58156502ecd6dd
+      size: 7272883
+    - path: ./content_based/Encode.py
+      hash: md5
+      md5: 61e615722687d8352ba48470c2b26601
+      size: 4262
+    outs:
+    - path: ./Data/chroma_db
+      hash: md5
+      md5: 01aa76514873b4deaba62f25708635fe.dir
+      size: 1872911688
+      nfiles: 6
+    - path: ./Data/content_base_data/encoding.npy
+      hash: md5
+      md5: b516d7dbd2ef605133225213e14a4376
+      size: 3418265472
+    - path: ./Data/processor_pickels/pre.pkl
+      hash: md5
+      md5: b54548e1836a90c25a567662ec4c485b
+      size: 137347
