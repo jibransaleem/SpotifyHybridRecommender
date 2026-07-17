@@ -90,6 +90,7 @@ def encoding(df:pd.DataFrame , encdoding_safe_path:str = SAVE_ENCODINGS ):
         if not isinstance(df , pd.DataFrame):
             raise ValueError("given object is not pandas dataframe")
         filtered  = load_transform_data(PROCESS_PATH)
+        filtered =  filtered.drop(columns=["track_id"])
         filtered["year"] = filtered["year"].astype("category")
         transformer = init_transformer()
         transformer= transformer.fit(filtered)
@@ -107,7 +108,10 @@ def save_to_vector_db():
     try:
         batch_size = 5000
         client = load_vector_db(CHROMA_DB_PATH)
-        collection = client.get_or_create_collection(name="song")
+        collection = client.get_or_create_collection(
+            name="song",
+            metadata={"hnsw:space": "cosine"}
+        )
         processed  = load_from_numpy(SAVE_ENCODINGS)
         ids = [str(i) for i in range(processed.shape[0])]
         for i in range(0, len(ids), batch_size):

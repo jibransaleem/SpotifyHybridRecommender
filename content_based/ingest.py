@@ -22,15 +22,10 @@ def preprocess(df : pd.DataFrame , process_data_save_path:str =PROCESS_PATH ):
         df.reset_index(drop=True , inplace=True)
         df["name"] = df["name"].str.lower()
         df["artist"] =  df["artist"].str.lower()
-        col_to_remove = ["track_id"  ,"spotify_preview_url" , "spotify_id" , "genre"]
+        col_to_remove = ["spotify_preview_url" , "spotify_id" , "genre"]
         filtered = df.drop(columns=col_to_remove)
         filtered.fillna({"tags":"no-tag"},inplace=True)
         filtered["artist"] = filtered["artist"].str.lower()
         filtered.to_csv(process_data_save_path  , index=False)
     except Exception as e:
         raise e
-# try:
-#     df =  load_songs()
-#     preprocess(df)
-# except Exception as e:
-#     print(e)

@@ -1,10 +1,9 @@
 import chromadb
 from pathlib import Path
-from Encode import load_transform_data  ,load_transformer
+from .Encode import load_transform_data  ,load_transformer
 
 import pandas as pd
 BASE_PATH = Path(__file__).resolve().parent.parent  / "Data"
-from ingest import load_songs
 PROCESS_PATH = str(BASE_PATH / "content_base_data" / "filter_content.csv")
 TRANSFORMER_PATH =str( BASE_PATH / "processor_pickels" / "pre.pkl")
 CHROMA_DB_PATH = str(BASE_PATH /"chroma_db")
@@ -21,6 +20,9 @@ def content_recommend(artist_name :str , song_name:str , top_k=5):
         df =load_transform_data()
         # print(type(df))
         query = df[(df["artist"]==artist_name) & (df["name"]==song_name)]
+        query.drop(columns=["track_id"],inplace=True)
+        if query.shape[0] == 0:
+            return pd.DataFrame(columns=["track_id", "score"])
         
         
         preprocessor = load_transformer()
@@ -38,18 +40,21 @@ def content_recommend(artist_name :str , song_name:str , top_k=5):
             query_embeddings=query_vector,
             n_results=top_k
         )
-        ids = result["ids"][0]
-        ids=[int(i) for i in ids]
+        ids=  result["ids"][0]
+        ids = [int(i) for i in result["ids"][0]]
+        scores = result["distances"][0]
+
+        recome_data = df.iloc[ids].copy()
+        recome_data["score"] = scores
+        # return recome_data[["track_id" ,"score"]]
+        # print(recome_data)
         
-        # recome_data = df.iloc[ids ,:]
-        df = load_songs()
-        dt = df.iloc[ids,:]
-        return dt
+        #
     except Exception as e:
         raise e
             
 #     try :
-try:
-    content_recommend(artist_name="radiohead" ,song_name="creep")
-except Exception as e:
-    print(e)
+# try:
+#     print(content_recommend(artist_name="coldplay" ,song_name="=Clocks"))
+# except Exception as e:
+#     print(e)

@@ -5,8 +5,7 @@ import numpy as np
 import pandas as pd
 import dask.dataframe as dd
 from sklearn.metrics.pairwise import cosine_similarity
-from scipy.sparse import csr_matrix, save_npz
-
+from scipy.sparse import csr_matrix, save_npz , load_npz
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 BASE_PATH = Path(__file__).resolve().parent.parent / "Data" # consistent with sys.path, not cwd-dependent
@@ -27,12 +26,28 @@ def save_sparse_matrix(matrix, save_path):
 
 
 def filter_data(songs_data: pd.DataFrame, track_ids: list, save_df_path=FILTERED_DATA_SAVE_PATH):
-    filtered_data = songs_data[songs_data["track_id"].isin(track_ids)]
-    filtered_data = filtered_data.reset_index(drop=True)
-    save_to_csv(filtered_data, save_df_path)
-    return filtered_data
+    filter_data = songs_data[songs_data["track_id"].isin(track_ids)]
+    filter_data["name"] = filter_data["name"].str.lower()
+    filter_data["artist"] = filter_data["artist"].str.lower()
+    filter_data = filter_data.reset_index(drop=True)
+    save_to_csv(filter_data, save_df_path)
+    return filter_data
+def load_filter_data():
+    path = FILTERED_DATA_SAVE_PATH
+    df = pd.read_csv(path)
+    return df
 
-
+def load_interaction_matrix():
+    pth =INTERACTION_MATRIX_PATH
+    
+    interaction_matrix = load_npz(pth)
+    return interaction_matrix
+    
+def load_track_ids():
+    pth = TRACK_ID_DATA_SAVE_PATH
+    return np.load(pth ,allow_pickle=True)
+    
+    
 def create_interaction_matrix(
     history_data: dd.DataFrame,
     track_id_save_path=TRACK_ID_DATA_SAVE_PATH,
@@ -71,6 +86,7 @@ def create_interaction_matrix(
 
 
 def recommend(song_name, artist_name, track_ids, song_data, interaction_matrix, top_k=5):
+    
     song_name = song_name.strip().lower()
     artist_name = artist_name.strip().lower()
 
@@ -79,7 +95,7 @@ def recommend(song_name, artist_name, track_ids, song_data, interaction_matrix, 
         & (song_data["artist"].str.lower() == artist_name)
     ]
     if song_row.empty:
-        raise ValueError(f"Song '{song_name}' by '{artist_name}' not found in dataset.")
+        return pd.DataFrame(columns=["track_id", "score"])
 
     input_track_id = song_row["track_id"].iloc[0]
     idx = np.where(track_ids == input_track_id)[0].item()
@@ -96,14 +112,18 @@ def recommend(song_name, artist_name, track_ids, song_data, interaction_matrix, 
 
     scores_df = pd.DataFrame({"track_id": top_track_ids.tolist(), "score": top_scores})
 
-    top_k_songs = (
-        song_data.loc[song_data["track_id"].isin(top_track_ids)]
-        .merge(scores_df, on="track_id")
-        .sort_values(by="score", ascending=False)
-        .drop(columns=["track_id", "score"])
-        .reset_index(drop=True)
-    )
-    return top_k_songs
+    # print(scores_df)
+    # mask = song_data["track_id"].isin(scores_df["track_id"].values)
+    # recom = song_data[mask]
+    # recom["scores"] =  scores_df["scoore"]
+    #  .drop(columns=["track_id", "score"])
+    # top_k_songs = (
+    #     song_data.loc[song_data["track_id"].isin(top_track_ids)]
+    #     .merge(scores_df, on="track_id")
+    #     .sort_values(by="score", ascending=False)  
+    #     .reset_index(drop=True)
+    # )
+    return scores_df
 def main():
     user_data = dd.read_csv(USER_DATA)
     
@@ -113,6 +133,4 @@ def main():
     songs_data = pd.read_csv(SONG_PATH)
     filter_data(songs_data , unique_track_ids,FILTERED_DATA_SAVE_PATH)
     create_interaction_matrix(user_data , TRACK_ID_DATA_SAVE_PATH , INTERACTION_MATRIX_PATH)
-    
-if __name__ == "__main__":
-    main()
+

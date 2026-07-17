@@ -1,30 +1,30 @@
-# stages:
-#   # Content_ingest:
-#   #   cmd: python ./content_based/ingest.py
-#   #   deps:
-#   #     - ./content_based/ingest.py
-#   #     - ./Data/Music Info.csv
+stages:
+  Content_ingest:
+    cmd: python ./content_based/ingest.py
+    deps:
+      - ./content_based/ingest.py
+      - ./Data/Music Info.csv
       
-#   #   outs:
-#   #     - ./Data/content_base_data/filter_content.csv
+    outs:
+      - ./Data/content_base_data/filter_content.csv
 
-#   Content_Encode:
-#     cmd: python ./content_based/Encode.py
-#     deps:
-#       - ./Data/content_base_data/filter_content.csv
-#       - ./content_based/Encode.py
-#     outs:
-#       - ./Data/content_base_data/encoding.npy
-#       - ./Data/processor_pickels/pre.pkl
-#       - ./Data/chroma_db
+  Content_Encode:
+    cmd: python ./content_based/Encode.py
+    deps:
+      - ./Data/content_base_data/filter_content.csv
+      - ./content_based/Encode.py
+    outs:
+      - ./Data/content_base_data/encoding.npy
+      - ./Data/processor_pickels/pre.pkl
+      - ./Data/chroma_db
     
-#   Collabrative:
-#     cmd: python ./collabrative/collab.py
-#     deps:
-#       - ./collabrative/collab.py
-#       - ./Data/Music Info.csv
-#       - ./Data/User Listening History.csv
-#     outs:
-#       - ./Data/filtered_data.csv
-#       - ./Data/track_id.npy
-#       - ./Data/interaction_matrix.npz
+  Collabrative:
+    cmd: python ./collabrative/collab.py
+    deps:
+      - ./collabrative/collab.py
+      - ./Data/Music Info.csv
+      - ./Data/User Listening History.csv
+    outs:
+      - ./Data/filtered_data.csv
+      - ./Data/track_id.npy
+      - ./Data/interaction_matrix.npz

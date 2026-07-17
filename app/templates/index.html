@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Groove — Hybrid Recommender</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <span class="brand-name">GROOVE</span>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+        Home
+      </div>
+      <div class="nav-item">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        Search
+      </div>
+    </nav>
+
+    <div class="recent-panel">
+      <h3>Recently Played</h3>
+      <ul id="recent-list" class="recent-list">
+        <li class="recent-empty">Nothing yet — play a track to start your session.</li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="topbar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input id="search-input" type="text" placeholder="Search songs or artists" autocomplete="off" />
+      </div>
+    </header>
+
+    <section id="browse-section" class="section">
+      <div class="section-head">
+        <h2>Browse</h2>
+      </div>
+      <div id="browse-grid" class="card-grid"></div>
+      <div id="browse-empty" class="empty-state hidden">
+        <p>No matches. Try a different search.</p>
+      </div>
+    </section>
+
+    <section id="suggest-section" class="section hidden">
+      <div class="section-head">
+        <h2>Because you played <span id="suggest-source" class="accent"></span></h2>
+        <button id="back-to-browse" class="ghost-btn">← Back to Browse</button>
+      </div>
+      <div id="suggest-grid" class="card-grid"></div>
+      <div id="suggest-empty" class="empty-state hidden">
+        <p>No recommendations found for this track.</p>
+      </div>
+      <div id="suggest-loading" class="loading-state hidden">
+        <span class="spinner"></span> Finding similar tracks…
+      </div>
+    </section>
+  </main>
+
+  <!-- Player Bar -->
+  <footer class="player-bar" id="player-bar">
+    <div class="player-track">
+      <div id="player-art" class="vinyl"><div class="vinyl-hole"></div></div>
+      <div class="player-meta">
+        <div id="player-name" class="player-name">No track selected</div>
+        <div id="player-artist" class="player-artist">—</div>
+      </div>
+    </div>
+
+    <div class="player-controls">
+      <button id="play-pause-btn" class="play-btn" disabled>
+        <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="icon-pause" viewBox="0 0 24 24" class="hidden"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <div class="progress-wrap">
+        <span id="time-current" class="time">0:00</span>
+        <input id="progress-bar" type="range" min="0" max="100" value="0" disabled />
+        <span id="time-total" class="time">0:00</span>
+      </div>
+    </div>
+
+    <div class="player-volume">
+      <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3z"/></svg>
+      <input id="volume-bar" type="range" min="0" max="100" value="70" />
+    </div>
+  </footer>
+
+  <audio id="audio" preload="none"></audio>
+
+  <div id="toast" class="toast"></div>
+</div>
+
+<script src="{{ url_for('static', path='js/app.js') }}"></script>
+</body>
+</html>
